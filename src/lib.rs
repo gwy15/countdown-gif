@@ -1,5 +1,4 @@
 use anyhow::{bail, Result};
-use chrono::TimeDelta;
 use std::io::Write;
 
 pub mod frames;
@@ -84,8 +83,9 @@ impl Iterator for DigitIter {
     }
 }
 
-pub fn generate<W: Write>(countdown: TimeDelta, pos: Position, output: W) -> Result<()> {
-    if countdown.num_days() > 99 {
+pub fn generate<W: Write>(countdown_sec: u32, pos: Position, output: W) -> Result<()> {
+    const SEC_IN_DAY: u32 = 3600 * 24;
+    if countdown_sec > (99 * SEC_IN_DAY + 23 * 3600 + 59 * 60 + 59) {
         bail!("too large");
     }
     match pos {
@@ -98,13 +98,13 @@ pub fn generate<W: Write>(countdown: TimeDelta, pos: Position, output: W) -> Res
             gen(iter, output)
         }
         Position::Second => {
-            let s = countdown.num_seconds() % 60;
+            let s = countdown_sec % 60;
             let iter = (0..60).chain(0..s as u32).rev().take(60);
             let iter = iter.enumerate().map(|(i, s)| (s, (i + 1) as f64));
             gen(iter, output)
         }
         Position::Minute => {
-            let s = countdown.num_seconds();
+            let s = countdown_sec;
             let (minute, second) = ((s / 60) % 60, s % 60);
             let iter = DigitIter::minute(minute as u32, second as u32)
                 .take(120)
@@ -112,7 +112,7 @@ pub fn generate<W: Write>(countdown: TimeDelta, pos: Position, output: W) -> Res
             gen(iter, output)
         }
         Position::Hour => {
-            let s = countdown.num_seconds();
+            let s = countdown_sec;
             let (hour, second) = ((s / 3600) % 24, s % 3600);
             let iter = DigitIter::hour(hour as u32, second as u32)
                 .take(72)
@@ -120,8 +120,7 @@ pub fn generate<W: Write>(countdown: TimeDelta, pos: Position, output: W) -> Res
             gen(iter, output)
         }
         Position::Day => {
-            const SEC_IN_DAY: i64 = 3600 * 24;
-            let s = countdown.num_seconds();
+            let s = countdown_sec;
             let (day, second) = (s / SEC_IN_DAY, s % SEC_IN_DAY);
             let iter = DigitIter::day(day as u32, second as u32)
                 .take(3)

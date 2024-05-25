@@ -1,10 +1,8 @@
 use anyhow::Result;
-use chrono::TimeDelta;
 use countdown_gif::Position;
 
 fn main() -> Result<()> {
-    let delta = TimeDelta::new(86400 * 3 + 72, 123).unwrap();
-    println!("delta= {delta}");
+    let delta = 86400 * 3 + 72;
 
     let files = [
         "subsec.gif",
