@@ -107,7 +107,7 @@ pub fn generate<W: Write>(countdown_sec: u32, pos: Position, output: W) -> Resul
             let s = countdown_sec;
             let (minute, second) = ((s / 60) % 60, s % 60);
             let iter = DigitIter::minute(minute, second)
-                .take(120)
+                .take(240)
                 .map(|(d, t)| (d, t as f64));
             gen(iter, output)
         }

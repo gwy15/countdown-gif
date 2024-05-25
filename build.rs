@@ -56,7 +56,7 @@ fn text_to_png<W: Write + Seek>(
     Ok(())
 }
 
-fn main() -> Result<()> {
+fn build_png() -> Result<()> {
     let font = std::fs::read("./font/digits.ttf")?;
     let font = rusttype::Font::try_from_vec(font).context("load font failed")?;
 
@@ -75,5 +75,10 @@ fn main() -> Result<()> {
         std::fs::write(output.join(format!("{i:02}.png")), &png)?;
     }
 
+    Ok(())
+}
+
+fn main() -> Result<()> {
+    build_png()?;
     Ok(())
 }
