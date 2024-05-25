@@ -99,14 +99,14 @@ pub fn generate<W: Write>(countdown_sec: u32, pos: Position, output: W) -> Resul
         }
         Position::Second => {
             let s = countdown_sec % 60;
-            let iter = (0..60).chain(0..s as u32).rev().take(60);
+            let iter = (0..60).chain(0..s).rev().take(60);
             let iter = iter.enumerate().map(|(i, s)| (s, (i + 1) as f64));
             gen(iter, output)
         }
         Position::Minute => {
             let s = countdown_sec;
             let (minute, second) = ((s / 60) % 60, s % 60);
-            let iter = DigitIter::minute(minute as u32, second as u32)
+            let iter = DigitIter::minute(minute, second)
                 .take(120)
                 .map(|(d, t)| (d, t as f64));
             gen(iter, output)
@@ -114,7 +114,7 @@ pub fn generate<W: Write>(countdown_sec: u32, pos: Position, output: W) -> Resul
         Position::Hour => {
             let s = countdown_sec;
             let (hour, second) = ((s / 3600) % 24, s % 3600);
-            let iter = DigitIter::hour(hour as u32, second as u32)
+            let iter = DigitIter::hour(hour, second)
                 .take(72)
                 .map(|(d, t)| (d, t as f64));
             gen(iter, output)
@@ -122,7 +122,7 @@ pub fn generate<W: Write>(countdown_sec: u32, pos: Position, output: W) -> Resul
         Position::Day => {
             let s = countdown_sec;
             let (day, second) = (s / SEC_IN_DAY, s % SEC_IN_DAY);
-            let iter = DigitIter::day(day as u32, second as u32)
+            let iter = DigitIter::day(day, second)
                 .take(3)
                 .map(|(d, t)| (d, t as f64));
             gen(iter, output)
